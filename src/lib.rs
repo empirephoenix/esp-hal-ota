@@ -269,8 +269,13 @@ where
 
             calc_crc = crc32::calc_crc32(&bytes[..n as usize], calc_crc);
         }
-
-        Ok(calc_crc == progress.target_crc)
+        let result = calc_crc == progress.target_crc;
+        if result {
+            info!("[OTA] Verify passed! expecting crc: {}, got: {} checked {} bytes", progress.target_crc, calc_crc, progress.flash_size);
+        } else {
+            error!("[OTA] Verify failed! expecting crc: {}, got: {} checked {} bytes", progress.target_crc, calc_crc, progress.flash_size);
+        }
+        Ok(result)
     }
 
     /// Sets ota boot target partition
